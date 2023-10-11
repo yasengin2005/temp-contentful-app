@@ -1,11 +1,18 @@
-import { useState, useEffect } from "react";
 import { createClient } from "contentful";
+import { useEffect } from "react";
+import { useState } from "react";
 
 const client = createClient({
   space: "u2pt69nif1hk",
   environment: "master",
   accessToken: import.meta.env.VITE_API_KEY,
 });
+
+client
+  .getEntries({
+    content_type: "contentfulCmsProject",
+  })
+  .then((response) => console.log(response));
 
 export const useFetchProjects = () => {
   const [loading, setLoading] = useState(true);
@@ -17,10 +24,10 @@ export const useFetchProjects = () => {
         content_type: "contentfulCmsProject",
       });
       const projects = response.items.map((item) => {
-        const { title, url, image } = item.fields;
+        const { image, title, url } = item.fields;
         const id = item.sys.id;
         const img = image?.fields?.file?.url;
-        return { title, url, id, img };
+        return { img, id, title, url };
       });
       setProjects(projects);
       setLoading(false);
